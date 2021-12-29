@@ -50,5 +50,35 @@ test_eqtls <- function()
 
 } # test_eqtls
 #----------------------------------------------------------------------------------------------------
+test_breakMotifs <- function()
+{
+    message(sprintf("--- test_breakMotifs"))
+
+    tag.snp.chrom <- "chr1"
+    tag.snp.loc <- 161185602
+    shoulder <- 60000
+
+    gls <- GwasLocusScores$new("rs4575096", "chr1", tag.snp.loc-shoulder, tag.snp.loc+shoulder,
+                               tissue.name="GTEx_V8.Brain_Hippocampus")
+
+    gls$load.eqtls()
+    tbl.eqtl <- gls$get.tbl.eqtl(1)
+    targetGene <- "PPOX"
+    pval.cutoff <- 1e-5
+    tbl.sub <- subset(tbl.eqtl, pvalue <= pval.cutoff & gene==targetGene)
+    snps <- unique(tbl.sub$rsid)
+    dim(tbl.sub)
+    checkTrue(nrow(tbl.sub > 4))
+
+    x <- system.time(tbl.breaks <- gls$breakMotifsAtEQTLs(targetGene, pval.cutoff))
+    message(sprintf("%4.1f minutes to break %d snps", round(x[["elapsed"]]/60, digits=1),
+                    length(snps)))
+
+    checkEquals(length(unique(tbl.breaks$SNP_id)), length(snps))
+    checkEquals(nrow(subset(tbl.breaks, pctDelta < -0.28)), 2)
+
+
+} # test_breakMotifs
+#----------------------------------------------------------------------------------------------------
 if(!interactive())
     runTests()
