@@ -32,7 +32,9 @@
       tissue.name=NULL,
       advx=NULL,      # ADvariantExplorer
       etx=NULL,        # EndophenotypeExplorer
-      tbl.eqtl=NULL
+      tbl.eqtl=NULL,
+      eqtl.catalog=NULL
+
       ),
  #--------------------------------------------------------------------------------
    public = list(
@@ -43,29 +45,42 @@
          #' @param chrom character, e.g., "chr1"
          #' @param start.loc numeric the start of the genomic region of interest
          #' @param end.loc numeric the end of the genomic region of interest
-         #' @param tissue.name character, e.g. "GTEx.brain_hippocampus"
-         #' @param
+         #' @param tissue.name character, e.g. "GTEx_V8.Brain_Hippocampus"
+         #' @return an object of the GwasLocusScores class
 
       initialize = function(tag.snp, chrom, start.loc, end.loc, tissue.name){
+         stopifnot(length(tissue.name) == 1)
          private$tag.snp <- tag.snp
          private$chrom <- chrom
          private$start.loc <- start.loc
          private$end.loc <- end.loc
          private$advx <- ADvariantExplorer$new(NULL, chrom, start.loc, end.loc)
          private$tissue.name <- tissue.name
+         private$eqtl.catalog <- private$advx$geteQTLSummary()
+         search.term <- sprintf("^%s$", tissue.name)
+         if(length(grep(search.term, private$eqtl.catalog$unique_id)) !=1)
+            stop(sprintf("'%s' does not uniquely identify a catalog study", tissue.name))
          },
-      load.eqtls = function(pvalue.cutoff){
+
+         #' @description
+         #' retrieves all eQTLs from the ebi eqtl catalogue
+         #'
+         #' @returns nothing
+      load.eqtls = function(){
          tbl.eqtl <- private$advx$geteQTLsByLocationAndStudyID(private$chrom,
                                                                private$start.loc,
                                                                private$end.loc,
                                                                private$tissue.name,
                                                                method="tabix", simplify=TRUE)
-         if(nrow(tbl.eqtl) > 0)
-           tbl.eqtl <- subset(tbl.eqtl, pvalue <= pvalue.cutoff)
          private$tbl.eqtl <- tbl.eqtl
          },
-      get.tbl.eqtl = function(){
-         return(invisible(private$tbl.eqtl))
+         #' @description
+         #' extract all previously obtained eQTLs at or aboce the specified pvalue threshold
+         #'
+         #' @param pvalue.cutoff numeric, e.g., 1e-4
+         #' @returns a data.frame
+      get.tbl.eqtl = function(pvalue.cutoff){
+         return(subset(private$tbl.eqtl, pvalue <= pvalue.cutoff))
          }
 
    ) # public

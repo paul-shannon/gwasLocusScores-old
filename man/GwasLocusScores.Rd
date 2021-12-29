@@ -3,6 +3,11 @@
 \name{GwasLocusScores}
 \alias{GwasLocusScores}
 \title{GwasLocusScores}
+\value{
+nothing
+
+a data.frame
+}
 \description{
 assess RNA-binding protein binding sites, their structure and motif matches
 }
@@ -44,17 +49,21 @@ Creates a new instance of this class.
 
 \item{\code{end.loc}}{numeric the end of the genomic region of interest}
 
-\item{\code{tissue.name}}{character, e.g. "GTEx.brain_hippocampus"}
+\item{\code{tissue.name}}{character, e.g. "GTEx_V8.brain_hippocampus"}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+an object of the GwasLocusScores class
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-load.eqtls"></a>}}
 \if{latex}{\out{\hypertarget{method-load.eqtls}{}}}
 \subsection{Method \code{load.eqtls()}}{
+retrieves all eQTLs from the ebi eqtl catalogue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{GwasLocusScores$load.eqtls(pvalue.cutoff)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{GwasLocusScores$load.eqtls()}\if{html}{\out{</div>}}
 }
 
 }
@@ -62,10 +71,18 @@ Creates a new instance of this class.
 \if{html}{\out{<a id="method-get.tbl.eqtl"></a>}}
 \if{latex}{\out{\hypertarget{method-get.tbl.eqtl}{}}}
 \subsection{Method \code{get.tbl.eqtl()}}{
+extract all previously obtained eQTLs at or aboce the specified pvalue threshold
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{GwasLocusScores$get.tbl.eqtl()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{GwasLocusScores$get.tbl.eqtl(pvalue.cutoff)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pvalue.cutoff}}{numeric, e.g., 1e-4}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
